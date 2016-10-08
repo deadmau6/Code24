@@ -9,5 +9,24 @@
     tools:context="pagani.joe.steganography.MainActivity">
 
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="Pic Crypt"
+        android:id="@+id/textView" />
+
+    <Button
+        android:text="Encrypt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="141dp"
+        android:id="@+id/encryptBtn"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="Decrypt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="138dp"
+        android:id="@+id/decryptBtn"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/encryptBtn" />
 </RelativeLayout>

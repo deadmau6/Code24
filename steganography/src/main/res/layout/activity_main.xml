@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="141dp"
         android:id="@+id/encryptBtn"
+        android:enabled="true"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true" />
 
@@ -27,6 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="138dp"
         android:id="@+id/decryptBtn"
+        android:enabled="true"
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/encryptBtn" />
 </RelativeLayout>

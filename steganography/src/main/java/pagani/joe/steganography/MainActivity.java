@@ -20,8 +20,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
         setContentView(R.layout.activity_main);
         context = this;
         encrypt = (Button) findViewById(R.id.encryptBtn);
+        encrypt.setOnClickListener(this);
         decrypt = (Button) findViewById(R.id.decryptBtn);
-
+        decrypt.setOnClickListener(this);
     }
 
     @Override
@@ -29,12 +30,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
         switch (v.getId()){
             case R.id.encryptBtn:
                 //go encrypt
-                System.out.println("hey");
-                Toast.makeText(this, "Ecrypt Btn", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Ecrypt Btn", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.decryptBtn:
                 //go decrypt
-                Toast.makeText(this, "Decrypt Btn", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Decrypt Btn", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

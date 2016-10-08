@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
 import android.content.Context;
+import android.widget.Toast;
 import android.widget.Button;
 
 public class MainActivity extends Activity implements View.OnClickListener{
@@ -28,6 +29,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         switch (v.getId()){
             case R.id.encryptBtn:
                 //go encrypt
+                Toast.makeText(context,"encrypt",Toast.LENGTH_LONG);
                 break;
             case R.id.decryptBtn:
                 //go decrypt

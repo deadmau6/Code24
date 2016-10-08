@@ -2,6 +2,7 @@ package pagani.joe.steganography;
 
 import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
+import android.widget.Toast;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
@@ -28,9 +29,12 @@ public class MainActivity extends Activity implements View.OnClickListener{
         switch (v.getId()){
             case R.id.encryptBtn:
                 //go encrypt
+                System.out.println("hey");
+                Toast.makeText(this, "Ecrypt Btn", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.decryptBtn:
                 //go decrypt
+                Toast.makeText(this, "Decrypt Btn", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

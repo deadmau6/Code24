@@ -1,8 +1,6 @@
 package MAIN;
 
-import java.awt.Color;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -91,38 +89,9 @@ public class Matroschka {
 	}
 	
 	
-	public void hideMessage(BufferedImage image, byte[] encryptedMessage)
+	public void hideMessage(Image image, byte[] encryptedMessage)
 	{
-		int x = 0;
-		int y = 0;
-		for(int b = 0; b < encryptedMessage.length; b++)
-		{
-			int first = encryptedMessage[b];
-			
-			if(encryptedMessage[b] < 0)
-			{
-				System.out.println("set image neg " + encryptedMessage[b]);
-				Color rgb = new Color(encryptedMessage[b] + 255, 0, 0);
-				image.setRGB(x, y, rgb.getRGB());
-			}
-			else
-			{
-				System.out.println("set image pos " + encryptedMessage[b]);
-				Color rgb = new Color(encryptedMessage[b], 0, 0);
-				image.setRGB(x, y, rgb.getRGB());
-			}
-			x++;
-			
-			
-			if(image.getWidth() <= x)
-			{
-				y++;
-				x=0;
-			}
-		}
 		
-		
-		//return image;
 	}
 	/*
 	public byte[] getMessageFromImage(Image image)

@@ -50,9 +50,10 @@ public class DecryptActivity extends Activity implements View.OnClickListener {
     }
 
     public void decryptActivity() {
-        //finish();
-        Intent startMainActivity = new Intent(this, MainActivity.class);
-        startActivity(startMainActivity);
+        Intent startMessageActivity = new Intent(this, MessageActivity.class);
+        startActivity(startMessageActivity);
+        finish();
+
     }
 
 }

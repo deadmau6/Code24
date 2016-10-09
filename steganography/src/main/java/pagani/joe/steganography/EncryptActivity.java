@@ -115,9 +115,6 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
 
             } else {
 
@@ -126,61 +123,12 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
 
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
             }
         }
         String password = passwordTxt.getText().toString();
         String message = messageTxt.getText().toString();
         byte[] encrypted;
         Matroschka mat=new Matroschka();
-        String filename = "secretImg.png";
-        /*File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File file = new File(path, filename);*/
-        //mContext.getDir("Pics",MODE_PRIVATE);
-        //File file = new File(mContext.getFilesDir(), filename);
-        /*try {
-            // Make sure the Pictures directory exists.
-            path.mkdirs();
-
-            // Very simple code to copy a picture from the application's
-            // resource into the external file.  Note that this code does
-            // no error checking, and assumes the picture is small (does not
-            // try to copy it in chunks).  Note that if external storage is
-            // not currently mounted this will silently fail.
-            //InputStream is = getResources().openRawResource(R.drawable.balloons);
-            OutputStream os = new FileOutputStream(file);
-            encrypted = mat.encrypt(message, password);
-            mat.hideMessage(bitImg,encrypted);
-            int bytes = bitImg.getByteCount();
-
-            ByteBuffer buffer = ByteBuffer.allocate(bytes); //Create a new buffer
-            bitImg.copyPixelsToBuffer(buffer); //Move the byte data to the buffer
-
-            byte[] data = buffer.array();
-            //is.read(data);
-            os.write(data);
-            //is.close();
-            os.close();
-
-            // Tell the media scanner about the new file so that it is
-            // immediately available to the user.
-            MediaScannerConnection.scanFile(this,
-                    new String[] { file.toString() }, null,
-                    new MediaScannerConnection.OnScanCompletedListener() {
-                        public void onScanCompleted(String path, Uri uri) {
-                            Log.i("ExternalStorage", "Scanned " + path + ":");
-                            Log.i("ExternalStorage", "-> uri=" + uri);
-                        }
-                    });
-        } catch (IOException e) {
-            // Unable to create file, likely because external storage is
-            // not currently mounted.
-            Log.w("ExternalStorage", "Error writing " + file, e);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
         try {
 
             encrypted = mat.encrypt(message, password);
@@ -198,23 +146,7 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
             bitEncryptImg.compress(Bitmap.CompressFormat.PNG, 100, fOut);
             fOut.flush();
             fOut.close();
-            //Toast.makeText(mContext, file.toString(), Toast.LENGTH_SHORT).show();
-            Log.d("file path: ", file.toString());
-            //file.createNewFile();
-            //FileOutputStream out = new FileOutputStream(file);
-            //FileOutputStream out = openFileOutput(filename, Context.MODE_PRIVATE);
-            //bitEncryptImg.compress(Bitmap.CompressFormat.PNG, 100, out);
-            /*int bytes = bitImg.getByteCount();
 
-            ByteBuffer buffer = ByteBuffer.allocate(bytes); //Create a new buffer
-            bitImg.copyPixelsToBuffer(buffer); //Move the byte data to the buffer
-
-            byte[] data = buffer.array();
-            out.write(data);*/
-            Log.d("out path: ", "");
-            //out.flush();
-            //out.close();
-            //MediaStore.Images.Media.insertImage(getContentResolver(), bitEncryptImg, "secretImg.png", "secretImg.png");
         } catch (Exception e) {
             Log.d("file path: ", "exception");
             e.printStackTrace();

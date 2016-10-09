@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
@@ -30,6 +31,9 @@ public class DecryptActivity extends Activity implements View.OnClickListener {
     private Button decryptBtn;
     private Bitmap mapImg;
     private EditText passwordTxt;
+    public String message="this shit";
+    public String password;
+    public Matroschka mat = new Matroschka();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,11 +90,11 @@ public class DecryptActivity extends Activity implements View.OnClickListener {
         return image;
     }
     public void decryptActivity() {
-        String message="this shit";
-        String password = passwordTxt.getText().toString();
-        Matroschka mat=new Matroschka();
+        password = passwordTxt.getText().toString();
         try {
             message=mat.decrypt(mat.getMessageFromImage(mapImg),password);
+            //new getImageTask().execute("k");
+            //message = temp[0];
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -99,6 +103,17 @@ public class DecryptActivity extends Activity implements View.OnClickListener {
         startActivity(startMessageActivity);
         finish();
     }
+    private class getImageTask extends AsyncTask<String, Void, Boolean> {
 
+        @Override
+        protected Boolean doInBackground(String... params) {
+            try {
+                message=mat.decrypt(mat.getMessageFromImage(mapImg),password);
+            } catch (Exception e){
+                //mat.hideMessage(bitImg,encrypted)
+            }
+            return true;
+        }
+    }
 }
 

@@ -14,15 +14,17 @@ import android.widget.TextView;
 public class MessageActivity extends Activity implements View.OnClickListener {
     public static Context mContext;
     private Button backBtn;
+    private Bundle extras;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message);
         mContext = this;
+        extras = getIntent().getExtras();
         backBtn = (Button) findViewById(R.id.backBtn);
         backBtn.setOnClickListener(this);
         TextView box = (TextView) findViewById(R.id.messageBox);
-        String message="hey";
+        String message= extras.getString("Imported Message");;
         box.setText(message);
     }
     public void onClick(View v) {

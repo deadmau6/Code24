@@ -10,6 +10,7 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 /**
@@ -22,6 +23,7 @@ public class DecryptActivity extends Activity implements View.OnClickListener {
     private Button selectImg;
     private Button decryptBtn;
     private String selectedImg;
+    private EditText passwordTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,7 @@ public class DecryptActivity extends Activity implements View.OnClickListener {
         selectImg.setOnClickListener(this);
         decryptBtn = (Button) findViewById(R.id.decryptBtn);
         decryptBtn.setOnClickListener(this);
+        passwordTxt = (EditText) findViewById(R.id.passwordField);
     }
 
     public void onClick(View v) {
@@ -78,7 +81,10 @@ public class DecryptActivity extends Activity implements View.OnClickListener {
         }
     }
     public void decryptActivity() {
+        String message="this shit";
+        String password = passwordTxt.getText().toString();
         Intent startMessageActivity = new Intent(this, MessageActivity.class);
+        startMessageActivity.putExtra("Imported Message", message);
         startActivity(startMessageActivity);
         finish();
 

@@ -10,6 +10,7 @@ import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.EditText;
 import android.os.Handler;
 import android.util.Log;
 
@@ -24,6 +25,8 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
     private Button selectImg;
     private Button encryptBtn;
     private String selectedImg;
+    private EditText passwordTxt;
+    private EditText messageTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,8 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
         selectImg.setOnClickListener(this);
         encryptBtn = (Button) findViewById(R.id.encryptBtn);
         encryptBtn.setOnClickListener(this);
+        passwordTxt = (EditText) findViewById(R.id.passwordField);
+        messageTxt = (EditText) findViewById(R.id.messageField);
 
     }
     public void onClick(View v){
@@ -80,6 +85,8 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
         }
     }
     public void encryptActivity() {
+        String password = passwordTxt.getText().toString();
+        String message = messageTxt.getText().toString();
         Toast.makeText(mContext, "Success", Toast.LENGTH_SHORT).show();
         mHandler.postDelayed(new Runnable() {
             public void run() {

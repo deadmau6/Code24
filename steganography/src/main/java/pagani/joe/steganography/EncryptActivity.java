@@ -87,7 +87,7 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
                 //Intent startMainActivity = new Intent(mContext, MainActivity.class);
                 //startActivity(startMainActivity);
             }
-        }, 3000);
+        }, 2000);
 
     }
 }

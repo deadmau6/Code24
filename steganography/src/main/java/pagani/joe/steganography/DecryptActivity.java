@@ -4,13 +4,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
+
+import java.io.FileDescriptor;
+import java.io.IOException;
 
 /**
  * Created by Joe on 10/8/2016.
@@ -21,7 +28,8 @@ public class DecryptActivity extends Activity implements View.OnClickListener {
     public static Context mContext;
     private Button selectImg;
     private Button decryptBtn;
-    private String selectedImg;
+    private Bitmap mapImg;
+    private EditText passwordTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +40,7 @@ public class DecryptActivity extends Activity implements View.OnClickListener {
         selectImg.setOnClickListener(this);
         decryptBtn = (Button) findViewById(R.id.decryptBtn);
         decryptBtn.setOnClickListener(this);
+        passwordTxt = (EditText) findViewById(R.id.passwordField);
     }
 
     public void onClick(View v) {
@@ -59,29 +68,36 @@ public class DecryptActivity extends Activity implements View.OnClickListener {
             if (data != null) {
                 imgUri = data.getData();
                 Log.d("Path: ", imgUri.toString());
-                getSelectedImgPath(imgUri);
+                try {
+                    mapImg=getBitmapFromUri(imgUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
-    public void getSelectedImgPath(Uri uri){
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        try {
-            if (cursor != null && cursor.moveToFirst()) {
-                selectedImg = cursor.getString(
-                        cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                );
-                Log.d("Display Name ", selectedImg);
-            }
-        } finally {
-            cursor.close();
-        }
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor =
+                getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image;
     }
     public void decryptActivity() {
+        String message="this shit";
+        String password = passwordTxt.getText().toString();
+        Matroschka mat=new Matroschka();
+        try {
+            message=mat.decrypt(mat.getMessageFromImage(mapImg),password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Intent startMessageActivity = new Intent(this, MessageActivity.class);
+        startMessageActivity.putExtra("Imported Message", message);
         startActivity(startMessageActivity);
         finish();
-
     }
 
 }

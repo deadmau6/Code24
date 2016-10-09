@@ -13,9 +13,11 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * Created by User on 10/9/2016.
+ */
 
 public class Matroschka {
-    
     public byte[] encrypt(String data, String key) throws Exception
     {
         SecureRandom rand = SecureRandom.getInstance("SHA1PRNG");
@@ -27,7 +29,7 @@ public class Matroschka {
         SecretKeySpec secretkeyspecs = new SecretKeySpec( derivedKey, "AES");
         Cipher cypher = Cipher.getInstance("AES/CTR/NoPadding");
         cypher.init(Cipher.ENCRYPT_MODE, secretkeyspecs, new IvParameterSpec(new byte[16]));
-        byte[] cypherText = cypher.doFinal(data.getBytes());
+        byte[] cypherText = cypher.doFinal(data.getBytes(StandardCharsets.UTF_8));
 
         byte[] HmacSalt = new byte[20];
         rand.nextBytes(HmacSalt);
@@ -75,7 +77,7 @@ public class Matroschka {
         cypher.init(Cipher.DECRYPT_MODE, secretkeyspecs, new IvParameterSpec(new byte[16]));
         byte[] unEncrypted = cypher.doFinal(cypherText);
 
-        String finalMessage = new String(unEncrypted);
+        String finalMessage = new String(unEncrypted, StandardCharsets.UTF_8);
 
         return finalMessage;
     }
@@ -86,7 +88,6 @@ public class Matroschka {
     {
         int x = 0;
         int y = 0;
-        Color c = new Color();
         for(int b = 0; b < encryptedMessage.length; b = b + 3)
         {
 
@@ -148,10 +149,10 @@ public class Matroschka {
                 thirdColor = 0;
             }
 
-
+            Color rgb = new Color();
 
             System.out.println("Red = " + firstColor + " Green = " + secondColor + " Blue = " + thirdColor);
-            image.setPixel(x, y, c.rgb(firstColor, secondColor, thirdColor));
+            image.setPixel(x, y, rgb.rgb(firstColor, secondColor, thirdColor));
 
             x++;
 
@@ -172,19 +173,22 @@ public class Matroschka {
             if(b < 0)
             {
                 //System.out.println("set image neg " + encryptedMessage[b]);
+                Color rgb = new Color();
 
-                image.setPixel(x, y, c.rgb(b + 256, 0, 0));
+                image.setPixel(x, y, rgb.rgb(b + 256, 0, 0));
             }
             else
             {
                 //System.out.println("set image pos " + encryptedMessage[b]);
-
-                image.setPixel(x, y, c.rgb(b, 0, 0));
+                Color rgb = new Color();
+                image.setPixel(x, y, rgb.rgb(b, 0, 0));
             }
 
             x--;
         }
-        image.setPixel(x, y, c.rgb(0,1,1));
+
+        Color rgb = new Color();
+        image.setPixel(x, y, rgb.rgb(0, 1, 1));
 
     }
 
@@ -196,17 +200,20 @@ public class Matroschka {
         int y = image.getHeight()-1;
         int byteSize = 0;
         Color c = new Color();
-
-        while(c.blue(image.getPixel(x, y))== 0 && c.green(image.getPixel(x, y)) == 0)
+        int currentColor = image.getPixel(x,y);
+        while(c.green(currentColor)== 0 && c.blue(currentColor)== 0)
         {
             byteSize++;
             x--;
+            currentColor = image.getPixel(x,y);
         }
         x = image.getWidth()-1;
         byte[] size = new byte[byteSize];
+
         for(int u = 0; u < size.length; u++)
         {
-            int val = c.red(image.getPixel(x - u, y));
+            currentColor = image.getPixel(x - u,y);
+            int val = c.red(currentColor);
             if(val > 127)
             {
                 val = val-256;
@@ -220,11 +227,12 @@ public class Matroschka {
         byte[] encryptedMessage = new byte[numBytes];
         for(int i = 0; i < encryptedMessage.length; i++)
         {
+            currentColor = image.getPixel(x,y);
             int byteVal;
             switch(i % 3)
             {
                 case 0:
-                    byteVal = c.red(image.getPixel(x, y));
+                    byteVal = c.red(currentColor);
                     if(byteVal > 127)
                     {
                         byteVal = byteVal-256;
@@ -232,7 +240,7 @@ public class Matroschka {
                     encryptedMessage[i] = Byte.parseByte(Integer.toString(byteVal));
                     break;
                 case 1:
-                    byteVal = c.green(image.getPixel(x, y));
+                    byteVal = c.green(currentColor);
                     if(byteVal > 127)
                     {
                         byteVal = byteVal-256;
@@ -240,7 +248,7 @@ public class Matroschka {
                     encryptedMessage[i] = Byte.parseByte(Integer.toString(byteVal));
                     break;
                 case 2:
-                    byteVal = c.blue(image.getPixel(x, y));
+                    byteVal = c.blue(currentColor);
                     if(byteVal > 127)
                     {
                         byteVal = byteVal-256;

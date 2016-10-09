@@ -10,8 +10,6 @@ public class runner {
 
 	public static void main(String[] args) throws Exception
 	{
-		System.out.println("start");
-		
 		Matroschka mat = new Matroschka();
 		
 		String data = "penis lord";
@@ -28,12 +26,16 @@ public class runner {
 		System.out.println(data + " " + key);
 		
 		byte[] penis = mat.encrypt(all, key);
-		/*
+		
 		for(byte b: penis)
 		{
-			System.out.println("done " + b);
+			System.out.println(b);
+			if(b == 0)
+			{
+				System.out.println("zero exists");
+			}
 		}
-		*/
+		
 		
 		//String massage = mat.decrypt(penis, key);
 		
@@ -41,10 +43,17 @@ public class runner {
 		
 		try{
 			System.out.println("buffer image");
-			BufferedImage image = ImageIO.read(new File("penis.png"));
+			BufferedImage image = ImageIO.read(new File("celty.jpg"));
 			System.out.println("hidemessage");
 			mat.hideMessage(image, penis);
-			ImageIO.write(image, "png", new File("penis.png"));
+			ImageIO.write(image, "png", new File("celty.jpg"));
+			
+			
+			image = ImageIO.read(new File("celty.jpg"));
+			mat.getMessageFromImage(image);
+			
 		}catch(Exception e){e.printStackTrace();}
+		
+		
 	}
 }

@@ -97,17 +97,15 @@ public class Matroschka {
 		int y = 0;
 		for(int b = 0; b < encryptedMessage.length; b++)
 		{
-			int first = encryptedMessage[b];
-			
 			if(encryptedMessage[b] < 0)
 			{
-				System.out.println("set image neg " + encryptedMessage[b]);
+				//System.out.println("set image neg " + encryptedMessage[b]);
 				Color rgb = new Color(encryptedMessage[b] + 255, 0, 0);
 				image.setRGB(x, y, rgb.getRGB());
 			}
 			else
 			{
-				System.out.println("set image pos " + encryptedMessage[b]);
+				//System.out.println("set image pos " + encryptedMessage[b]);
 				Color rgb = new Color(encryptedMessage[b], 0, 0);
 				image.setRGB(x, y, rgb.getRGB());
 			}
@@ -121,14 +119,74 @@ public class Matroschka {
 			}
 		}
 		
+		x = image.getWidth()-1;
+		y = image.getHeight()-1;
 		
-		//return image;
+			String s = Integer.toString(encryptedMessage.length);
+			System.out.println("s = " + s);
+			byte[] sizeAsBytes = s.getBytes();
+			for(byte b: sizeAsBytes)
+			{
+				System.out.println("b = " + b);
+				if(b < 0)
+				{
+					//System.out.println("set image neg " + encryptedMessage[b]);
+					Color rgb = new Color(b + 255, 0, 0);
+					image.setRGB(x, y, rgb.getRGB());
+				}
+				else
+				{
+					//System.out.println("set image pos " + encryptedMessage[b]);
+					Color rgb = new Color(b, 0, 0);
+					image.setRGB(x, y, rgb.getRGB());
+				}
+				
+				x--;
+			}
+		
+			Color rgb = new Color(0, 1, 1);
+			image.setRGB(x, y, rgb.getRGB());
+			
 	}
-	/*
-	public byte[] getMessageFromImage(Image image)
+	
+	
+	
+	public byte[] getMessageFromImage(BufferedImage image)
 	{
-		return new byte[] happiness;
+		int x = image.getWidth()-1;
+		int y = image.getHeight()-1;
+		int byteSize = 0;
+		Color c = new Color(image.getRGB(x, y));
+		
+		while(c.getBlue()== 0 && c.getGreen() == 0)
+		{
+			byteSize++;
+			x--;
+			c = new Color(image.getRGB(x, y));
+		}
+		x = image.getWidth()-1;
+		byte[] size = new byte[byteSize];
+		for(int u = 0; u < size.length; u++)
+		{
+			c = new Color(image.getRGB(x - u, y));
+			int val = c.getRed();
+			if(val > 127)
+			{
+				val = val-255;
+			}
+			size[u] = Byte.parseByte(Integer.toString(val));
+		}
+		for(byte l:size)
+		{
+			System.out.println("l = " + l);
+		}
+		String diditwork = new String(size);
+		System.out.println("success?" + diditwork);
+		
+		
+		byte[] happiness = null;
+		return happiness;
 	}
-	*/
+	
 	
 }

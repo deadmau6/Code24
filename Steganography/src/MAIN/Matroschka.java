@@ -24,35 +24,25 @@ public class Matroschka {
 		rand.nextBytes(saltEncrypt);
 		byte[] derivedKey = getDerivedKey(key, saltEncrypt, 100000, 128);
 		
-		System.out.println("salt done");
-		
 		SecretKeySpec secretkeyspecs = new SecretKeySpec( derivedKey, "AES");
 		Cipher cypher = Cipher.getInstance("AES/CTR/NoPadding");
 		cypher.init(Cipher.ENCRYPT_MODE, secretkeyspecs, new IvParameterSpec(new byte[16]));
 		byte[] cypherText = cypher.doFinal(data.getBytes(StandardCharsets.UTF_8));
 		
-		System.out.println("encrpyted");
-		
 		byte[] HmacSalt = new byte[20];
 		rand.nextBytes(HmacSalt);
 		byte[] derivedHmacKey = getDerivedKey(key, saltEncrypt, 100000, 128);
-		
-		System.out.println("hmac salt");
 		
 		SecretKeySpec HmacSecretkeyspecs = new SecretKeySpec(derivedHmacKey, "HmacSHA256");
 		Mac mac = Mac.getInstance("HmacSHA256");
 		mac.init(HmacSecretkeyspecs);
 		byte[] hmac = mac.doFinal(cypherText);
 		
-		System.out.println("hmacced");
-		
 		byte[] done = new byte[40 + cypherText.length + 32];
 		System.arraycopy(saltEncrypt, 0, done, 0, 20);
 		System.arraycopy(HmacSalt, 0, done, 20, 20);
 		System.arraycopy(cypherText, 0, done, 40, cypherText.length);
 		System.arraycopy(hmac, 0, done, 40+ cypherText.length, 32);
-		
-		System.out.println("size = " + done.length);
 		
 		return done;
 	}
@@ -66,7 +56,7 @@ public class Matroschka {
 	
 	public String decrypt(byte[] message, String key) throws Exception
 	{
-		System.out.println("MESSAGE size = " + message.length);
+		//System.out.println("MESSAGE size = " + message.length);
 		
 		byte[] saltEncrypt = Arrays.copyOfRange(message, 0, 20);
 		byte[] HmacSalt = Arrays.copyOfRange(message, 20, 20);
@@ -100,19 +90,24 @@ public class Matroschka {
 			if(encryptedMessage[b] < 0)
 			{
 				//System.out.println("set image neg " + encryptedMessage[b]);
-				Color rgb = new Color(encryptedMessage[b] + 255, 0, 0);
+				Color rgb = new Color(encryptedMessage[b] + 256, 0, 0);
 				image.setRGB(x, y, rgb.getRGB());
 			}
-			else
+			else if(encryptedMessage[b] > 0)
 			{
 				//System.out.println("set image pos " + encryptedMessage[b]);
 				Color rgb = new Color(encryptedMessage[b], 0, 0);
 				image.setRGB(x, y, rgb.getRGB());
 			}
+			else
+			{
+				Color rgb = new Color(0, 0, 0);
+				image.setRGB(x, y, rgb.getRGB());
+			}
 			x++;
 			
 			
-			if(image.getWidth() <= x)
+			if(x >= image.getWidth())
 			{
 				y++;
 				x=0;
@@ -123,15 +118,13 @@ public class Matroschka {
 		y = image.getHeight()-1;
 		
 			String s = Integer.toString(encryptedMessage.length);
-			System.out.println("s = " + s);
 			byte[] sizeAsBytes = s.getBytes();
 			for(byte b: sizeAsBytes)
 			{
-				System.out.println("b = " + b);
 				if(b < 0)
 				{
 					//System.out.println("set image neg " + encryptedMessage[b]);
-					Color rgb = new Color(b + 255, 0, 0);
+					Color rgb = new Color(b + 256, 0, 0);
 					image.setRGB(x, y, rgb.getRGB());
 				}
 				else
@@ -172,20 +165,33 @@ public class Matroschka {
 			int val = c.getRed();
 			if(val > 127)
 			{
-				val = val-255;
+				val = val-256;
 			}
 			size[u] = Byte.parseByte(Integer.toString(val));
 		}
-		for(byte l:size)
+		int numBytes = Integer.parseInt(new String(size));
+		
+		x = 0;
+		y = 0;
+		byte[] encryptedMessage = new byte[numBytes];
+		for(int i = 0; i < encryptedMessage.length; i++)
 		{
-			System.out.println("l = " + l);
+			c = new Color(image.getRGB(x, y));
+			int byteVal = c.getRed();
+			if(byteVal > 127)
+			{
+				byteVal = byteVal-256;
+			}
+			encryptedMessage[i] = Byte.parseByte(Integer.toString(byteVal));
+			x++;
+			if(x >= image.getWidth())
+			{
+				x = 0;
+				y ++;
+			}
 		}
-		String diditwork = new String(size);
-		System.out.println("success?" + diditwork);
 		
-		
-		byte[] happiness = null;
-		return happiness;
+		return encryptedMessage;
 	}
 	
 	

@@ -21,7 +21,7 @@ public class runner {
 		{
 			all+=scan.nextLine();
 		}
-		
+		scan.close();
 		
 		System.out.println(data + " " + key);
 		
@@ -29,11 +29,14 @@ public class runner {
 		
 		for(byte b: penis)
 		{
-			System.out.println(b);
-			if(b == 0)
-			{
-				System.out.println("zero exists");
-			}
+			//System.out.println(b);
+			
+				System.out.println(b);
+				if(b == -128)
+				{
+					System.out.println(Byte.toString(b));
+				}
+			
 		}
 		
 		
@@ -47,11 +50,15 @@ public class runner {
 			System.out.println("hidemessage");
 			mat.hideMessage(image, penis);
 			ImageIO.write(image, "png", new File("celty.jpg"));
-			
-			
 			image = ImageIO.read(new File("celty.jpg"));
-			mat.getMessageFromImage(image);
+			byte[] encryptedMessage = mat.getMessageFromImage(image);
+			for(byte b: encryptedMessage)
+			{
+				//System.out.println(b);
+			}
 			
+			String r = mat.decrypt(encryptedMessage, key);
+			System.out.println(r);
 		}catch(Exception e){e.printStackTrace();}
 		
 		

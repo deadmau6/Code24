@@ -21,7 +21,6 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
     public static Context mContext;
     private Button selectImg;
     private Button encryptBtn;
-    //private Intent openImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

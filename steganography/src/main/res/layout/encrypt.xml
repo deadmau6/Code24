@@ -11,6 +11,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="70dp"
         android:id="@+id/selectImgBtn" />
+        android:enabled="true"
 
     <EditText
         android:layout_width="wrap_content"

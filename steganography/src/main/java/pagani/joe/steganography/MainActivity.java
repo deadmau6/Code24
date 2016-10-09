@@ -10,7 +10,7 @@ import android.content.Context;
 import android.widget.Button;
 
 public class MainActivity extends Activity implements View.OnClickListener{
-    private static Context context;
+    public static Context context;
     private Button encrypt;
     private Button decrypt;
 
@@ -30,12 +30,17 @@ public class MainActivity extends Activity implements View.OnClickListener{
         switch (v.getId()){
             case R.id.encryptBtn:
                 //go encrypt
-                Toast.makeText(context, "Ecrypt Btn", Toast.LENGTH_SHORT).show();
+                encryptActivity();
                 break;
             case R.id.decryptBtn:
                 //go decrypt
                 Toast.makeText(context, "Decrypt Btn", Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    public void encryptActivity(){
+        Intent startEncryptActivity = new Intent(this, EncryptActivity.class);
+        startActivity(startEncryptActivity);
     }
 }

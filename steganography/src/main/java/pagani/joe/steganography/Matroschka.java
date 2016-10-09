@@ -2,6 +2,7 @@ package pagani.joe.steganography;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.Log;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -86,6 +87,8 @@ public class Matroschka {
 
     public void hideMessage(Bitmap image, byte[] encryptedMessage)
     {
+        //image = image.copy(Bitmap.Config.ARGB_8888, true);
+        Color rgb = new Color();
         int x = 0;
         int y = 0;
         for(int b = 0; b < encryptedMessage.length; b = b + 3)
@@ -149,9 +152,10 @@ public class Matroschka {
                 thirdColor = 0;
             }
 
-            Color rgb = new Color();
+            //Color rgb = new Color();
 
-            System.out.println("Red = " + firstColor + " Green = " + secondColor + " Blue = " + thirdColor);
+            //String temp = "Red = " + Integer.toString(firstColor) + " Green = " + Integer.toString(secondColor) + " Blue = " + Integer.toString(thirdColor);
+            //Log.v("RGB", temp);
             image.setPixel(x, y, rgb.rgb(firstColor, secondColor, thirdColor));
 
             x++;
@@ -173,21 +177,21 @@ public class Matroschka {
             if(b < 0)
             {
                 //System.out.println("set image neg " + encryptedMessage[b]);
-                Color rgb = new Color();
+                //Color rgb = new Color();
 
                 image.setPixel(x, y, rgb.rgb(b + 256, 0, 0));
             }
             else
             {
                 //System.out.println("set image pos " + encryptedMessage[b]);
-                Color rgb = new Color();
+                //Color rgb = new Color();
                 image.setPixel(x, y, rgb.rgb(b, 0, 0));
             }
 
             x--;
         }
 
-        Color rgb = new Color();
+        //Color rgb = new Color();
         image.setPixel(x, y, rgb.rgb(0, 1, 1));
 
     }

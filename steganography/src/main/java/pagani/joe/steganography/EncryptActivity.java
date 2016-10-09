@@ -41,6 +41,8 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
     private Button selectImg;
     private Button encryptBtn;
     private String selectedImg;
+    private String data;
+    private String key;
     private Bitmap bitImg;
     private EditText passwordTxt;
     private EditText messageTxt;
@@ -85,7 +87,8 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
                 Log.d("Path: ", imgUri.toString());
                 selectedImg = imgUri.toString();
                 try {
-                    bitImg=getBitmapFromUri(imgUri);
+                    Bitmap bitTemp = getBitmapFromUri(imgUri);
+                    bitImg = bitTemp.copy(Bitmap.Config.ARGB_8888, true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -103,15 +106,9 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
     }
 
     public void encryptActivity() {
-        String key = passwordTxt.getText().toString();
-        String data = messageTxt.getText().toString();
-        try {
-            encrypted = mat.encrypt(data, key);
-            Log.v("encry", Integer.toString(encrypted.length));
-
-        } catch (Exception e) {
-            Toast.makeText(mContext, "Scatch", Toast.LENGTH_SHORT).show();
-        }
+        key = passwordTxt.getText().toString();
+        data = messageTxt.getText().toString();
+        new getImageTask().execute("named");
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 finish();
@@ -125,16 +122,19 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
 
         @Override
         protected Boolean doInBackground(String... params) {
-            mat.hideMessage(bitImg,encrypted);
             File dest = new File(selectedImg, params+".png");
             try {
                 FileOutputStream out = new FileOutputStream(dest);
+                encrypted = mat.encrypt(data, key);
+                mat.hideMessage(bitImg,encrypted);
                 bitImg.compress(Bitmap.CompressFormat.PNG, 100, out);
                 out.flush();
                 out.close();
-                MediaStore.Images.Media.insertImage(getContentResolver(), dest.getAbsolutePath(), ".png", params+".png");
+                //MediaStore.Images.Media.insertImage(getContentResolver(), dest.getAbsolutePath(), params+".png", "your secret sir");
                 return true;
             } catch (Exception e){
+                mat.hideMessage(bitImg,encrypted);
+                //bitImg.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(dest));
                 Log.v("Catch","image sync fail");
                 return false;
             }

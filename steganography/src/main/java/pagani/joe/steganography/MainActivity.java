@@ -1,6 +1,5 @@
 package pagani.joe.steganography;
 
-import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.widget.Toast;
 import android.os.Bundle;
@@ -19,28 +18,32 @@ public class MainActivity extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
-        encrypt = (Button) findViewById(R.id.encryptBtn);
+        encrypt = (Button) findViewById(R.id.startEncryptBtn);
         encrypt.setOnClickListener(this);
-        decrypt = (Button) findViewById(R.id.decryptBtn);
+        decrypt = (Button) findViewById(R.id.startDecryptBtn);
         decrypt.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v){
         switch (v.getId()){
-            case R.id.encryptBtn:
+            case R.id.startEncryptBtn:
                 //go encrypt
-                encryptActivity();
+                startEncryptActivity();
                 break;
-            case R.id.decryptBtn:
+            case R.id.startDecryptBtn:
                 //go decrypt
-                Toast.makeText(context, "Decrypt Btn", Toast.LENGTH_SHORT).show();
+                startDecryptActivity();
                 break;
         }
     }
 
-    public void encryptActivity(){
+    public void startEncryptActivity(){
         Intent startEncryptActivity = new Intent(this, EncryptActivity.class);
         startActivity(startEncryptActivity);
+    }
+    public void startDecryptActivity(){
+        Intent startDecryptActivity = new Intent(this, DecryptActivity.class);
+        startActivity(startDecryptActivity);
     }
 }

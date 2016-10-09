@@ -4,14 +4,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 import android.os.Handler;
 import android.util.Log;
+
+import java.io.FileDescriptor;
+import java.io.IOException;
 
 /**
  * Created by User on 10/8/2016.
@@ -19,11 +26,16 @@ import android.util.Log;
 
 public class EncryptActivity extends Activity implements View.OnClickListener {
     private static final int READ_REQUEST_CODE = 42;
+    private Matroschka mat = new Matroschka();
     private Handler mHandler = new Handler();
     public static Context mContext;
     private Button selectImg;
     private Button encryptBtn;
-    private String selectedImg;
+    private Bitmap selectedImg;
+    private EditText passwordtxt;
+    private String key;
+    private EditText messagetxt;
+    private String data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +46,8 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
         selectImg.setOnClickListener(this);
         encryptBtn = (Button) findViewById(R.id.encryptBtn);
         encryptBtn.setOnClickListener(this);
+        passwordtxt = (EditText) findViewById(R.id.password);
+        messagetxt = (EditText) findViewById(R.id.message);
 
     }
     public void onClick(View v){
@@ -43,7 +57,13 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
                 selectImage();
                 break;
             case R.id.encryptBtn:
-                encryptActivity();
+                key = passwordtxt.getText().toString();
+                data = messagetxt.getText().toString();
+                try {
+                    encryptActivity();
+                } catch (Exception e) {
+                    Toast.makeText(mContext, "Catch", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
@@ -61,26 +81,30 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
             if (data != null) {
                 imgUri = data.getData();
                 Log.d("Path: ", imgUri.toString());
-                getSelectedImgPath(imgUri);
+                try {
+                    selectedImg = getImg(imgUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
-    public void getSelectedImgPath(Uri uri){
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        try {
-            if (cursor != null && cursor.moveToFirst()) {
-                selectedImg = cursor.getString(
-                        cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                );
-                Log.d("Display Name ", selectedImg);
-            }
-        } finally {
-            cursor.close();
-        }
+    public Bitmap getImg(Uri uri) throws IOException{
+        ParcelFileDescriptor parcelFileDescriptor =
+                getContentResolver().openFileDescriptor(uri, "rb");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image;
     }
-    public void encryptActivity() {
-        Toast.makeText(mContext, "Success", Toast.LENGTH_SHORT).show();
+    public void encryptActivity() throws Exception {
+        if (key != null && data != null && selectedImg != null) {
+            mat.hideMessage(selectedImg, mat.encrypt(data, key));
+            Toast.makeText(mContext, "Success", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
+        }
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 finish();

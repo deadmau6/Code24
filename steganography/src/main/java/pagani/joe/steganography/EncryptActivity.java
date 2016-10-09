@@ -3,13 +3,14 @@ package pagani.joe.steganography;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.Button;
@@ -19,8 +20,10 @@ import android.os.Handler;
 import android.util.Log;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -32,6 +35,8 @@ import java.io.IOException;
 public class EncryptActivity extends Activity implements View.OnClickListener {
     private static final int READ_REQUEST_CODE = 42;
     private Handler mHandler = new Handler();
+    public Matroschka mat=new Matroschka();
+    public byte[] encrypted;
     public static Context mContext;
     private Button selectImg;
     private Button encryptBtn;
@@ -78,27 +83,13 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
             if (data != null) {
                 imgUri = data.getData();
                 Log.d("Path: ", imgUri.toString());
-                getSelectedImgPath(imgUri);
+                selectedImg = imgUri.toString();
                 try {
                     bitImg=getBitmapFromUri(imgUri);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        }
-    }
-
-    public void getSelectedImgPath(Uri uri){
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        try {
-            if (cursor != null && cursor.moveToFirst()) {
-                selectedImg = cursor.getString(
-                        cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                );
-                Log.d("Display Name ", selectedImg);
-            }
-        } finally {
-            cursor.close();
         }
     }
 
@@ -112,24 +103,15 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
     }
 
     public void encryptActivity() {
-        String password = passwordTxt.getText().toString();
-        String message = messageTxt.getText().toString();
-        byte[] encrypted;
-        Matroschka mat=new Matroschka();
-        String filename = "secretImg.png";
-        File downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File dest = new File(downloads, filename);
+        String key = passwordTxt.getText().toString();
+        String data = messageTxt.getText().toString();
         try {
-            encrypted = mat.encrypt(message, password);
-            mat.hideMessage(bitImg,encrypted);
-            FileOutputStream out = new FileOutputStream(dest);
-            bitImg.compress(Bitmap.CompressFormat.PNG, 100, out);
-            out.flush();
-            out.close();
+            encrypted = mat.encrypt(data, key);
+            Log.v("encry", Integer.toString(encrypted.length));
+
         } catch (Exception e) {
-            e.printStackTrace();
+            Toast.makeText(mContext, "Scatch", Toast.LENGTH_SHORT).show();
         }
-        Toast.makeText(mContext, "Success", Toast.LENGTH_SHORT).show();
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 finish();
@@ -139,6 +121,23 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
         }, 2000);
 
     }
+    private class getImageTask extends AsyncTask<String, Void, Boolean> {
 
-
+        @Override
+        protected Boolean doInBackground(String... params) {
+            mat.hideMessage(bitImg,encrypted);
+            File dest = new File(selectedImg, params+".png");
+            try {
+                FileOutputStream out = new FileOutputStream(dest);
+                bitImg.compress(Bitmap.CompressFormat.PNG, 100, out);
+                out.flush();
+                out.close();
+                MediaStore.Images.Media.insertImage(getContentResolver(), dest.getAbsolutePath(), ".png", params+".png");
+                return true;
+            } catch (Exception e){
+                Log.v("Catch","image sync fail");
+                return false;
+            }
+        }
+    }
 }

@@ -6,14 +6,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import android.os.Handler;
-
-import static pagani.joe.steganography.R.layout.encrypt;
+import android.util.Log;
 
 /**
  * Created by User on 10/8/2016.
@@ -25,7 +23,6 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
     public static Context mContext;
     private Button selectImg;
     private Button encryptBtn;
-    //private Intent openImg;
     private String selectedImg;
 
     @Override

@@ -10,15 +10,22 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.Button;
-import android.util.Log;
+import android.widget.Toast;
+import android.os.Handler;
+
+import static pagani.joe.steganography.R.layout.encrypt;
+
 /**
  * Created by User on 10/8/2016.
  */
 
 public class EncryptActivity extends Activity implements View.OnClickListener {
     private static final int READ_REQUEST_CODE = 42;
+    private Handler mHandler = new Handler();
     public static Context mContext;
     private Button selectImg;
+    private Button encryptBtn;
+    //private Intent openImg;
     private String selectedImg;
 
     @Override
@@ -28,12 +35,18 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
         mContext = this;
         selectImg = (Button) findViewById(R.id.selectImgBtn);
         selectImg.setOnClickListener(this);
+        encryptBtn = (Button) findViewById(R.id.encryptBtn);
+        encryptBtn.setOnClickListener(this);
 
     }
     public void onClick(View v){
         switch (v.getId()){
             case R.id.selectImgBtn:
+                //go encrypt
                 selectImage();
+                break;
+            case R.id.encryptBtn:
+                encryptActivity();
                 break;
         }
     }
@@ -68,5 +81,16 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
         } finally {
             cursor.close();
         }
+    }
+    public void encryptActivity() {
+        Toast.makeText(mContext, "Success", Toast.LENGTH_SHORT).show();
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                finish();
+                //Intent startMainActivity = new Intent(mContext, MainActivity.class);
+                //startActivity(startMainActivity);
+            }
+        }, 3000);
+
     }
 }

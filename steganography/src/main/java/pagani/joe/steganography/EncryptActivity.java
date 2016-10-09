@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +17,13 @@ import android.widget.Toast;
 import android.widget.EditText;
 import android.os.Handler;
 import android.util.Log;
+
+
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 
 /**
  * Created by User on 10/8/2016.
@@ -25,6 +36,7 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
     private Button selectImg;
     private Button encryptBtn;
     private String selectedImg;
+    private Bitmap bitImg;
     private EditText passwordTxt;
     private EditText messageTxt;
 
@@ -67,6 +79,11 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
                 imgUri = data.getData();
                 Log.d("Path: ", imgUri.toString());
                 getSelectedImgPath(imgUri);
+                try {
+                    bitImg=getBitmapFromUri(imgUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -84,9 +101,34 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
             cursor.close();
         }
     }
+
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor =
+                getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image;
+    }
+
     public void encryptActivity() {
         String password = passwordTxt.getText().toString();
         String message = messageTxt.getText().toString();
+        byte[] encrypted;
+        Matroschka mat=new Matroschka();
+        String filename = "secretImg.png";
+        File downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File dest = new File(downloads, filename);
+        try {
+            encrypted = mat.encrypt(message, password);
+            mat.hideMessage(bitImg,encrypted);
+            FileOutputStream out = new FileOutputStream(dest);
+            bitImg.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Toast.makeText(mContext, "Success", Toast.LENGTH_SHORT).show();
         mHandler.postDelayed(new Runnable() {
             public void run() {
@@ -97,4 +139,6 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
         }, 2000);
 
     }
+
+
 }

@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.Button;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.util.Log;
  */
 
 public class EncryptActivity extends Activity implements View.OnClickListener {
+    private static final int READ_REQUEST_CODE = 42;
     public static Context mContext;
     private Button selectImg;
     private String selectedImg;
@@ -36,37 +38,35 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
         }
     }
     public void selectImage(){
-        Intent openImg = new Intent();
+        Intent openImg = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        openImg.addCategory(Intent.CATEGORY_OPENABLE);
         openImg.setType("image/*");
-        openImg.setAction(Intent.ACTION_OPEN_DOCUMENT);
-        startActivityForResult(Intent.createChooser(openImg, "Select Image"), 1);
+        startActivityForResult(openImg, READ_REQUEST_CODE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (resultCode == RESULT_OK) {
-            if (requestCode == 1) {
-                Uri imgUri = data.getData();
-                selectedImg = getSelectedImgPath(imgUri);
-                Log.d("Path: ", selectedImg + "blank");
+        if (resultCode == Activity.RESULT_OK && requestCode == READ_REQUEST_CODE){
+            Uri imgUri = null;
+            if (data != null) {
+                imgUri = data.getData();
+                Log.d("Path: ", imgUri.toString());
+                getSelectedImgPath(imgUri);
             }
         }
     }
 
-    public String getSelectedImgPath(Uri uri){
-        if (uri == null) {
-            return null;
-        }
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-        cursor.moveToFirst();
-        if (cursor != null) {
-            int index = cursor.getColumnIndexOrThrow(projection[0]);
-            String path = cursor.getString(index);
+    public void getSelectedImgPath(Uri uri){
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                selectedImg = cursor.getString(
+                        cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                );
+                Log.d("Display Name ", selectedImg);
+            }
+        } finally {
             cursor.close();
-            return path;
         }
-        cursor.close();
-        return uri.getPath();
     }
 }

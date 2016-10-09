@@ -84,8 +84,10 @@ public class Matroschka {
 
 
 
-    public void hideMessage(Bitmap image, byte[] encryptedMessage)
+    public Bitmap hideMessage(Bitmap image, byte[] encryptedMessage)
     {
+
+        image = image.copy(Bitmap.Config.ARGB_8888,true);
         int x = 0;
         int y = 0;
         for(int b = 0; b < encryptedMessage.length; b = b + 3)
@@ -189,7 +191,7 @@ public class Matroschka {
 
         Color rgb = new Color();
         image.setPixel(x, y, rgb.rgb(0, 1, 1));
-
+        return image;
     }
 
 

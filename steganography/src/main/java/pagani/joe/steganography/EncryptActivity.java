@@ -123,22 +123,19 @@ public class EncryptActivity extends Activity implements View.OnClickListener {
         @Override
         protected Boolean doInBackground(String... params) {
             File dest = new File(selectedImg, params+".png");
-            dest.canRead();
-            dest.canWrite();
             try {
-
-                dest.createNewFile();
                 FileOutputStream out = new FileOutputStream(dest);
                 encrypted = mat.encrypt(data, key);
                 mat.hideMessage(bitImg,encrypted);
                 bitImg.compress(Bitmap.CompressFormat.PNG, 100, out);
                 out.flush();
                 out.close();
-                MediaStore.Images.Media.insertImage(getContentResolver(), dest.getAbsolutePath(), params+".png", "your secret sir");
+                //MediaStore.Images.Media.insertImage(getContentResolver(), dest.getAbsolutePath(), params+".png", "your secret sir");
                 return true;
             } catch (Exception e){
-                //mat.hideMessage(bitImg,encrypted);
-                Log.v(dest.getAbsolutePath(), e.toString());
+                mat.hideMessage(bitImg,encrypted);
+                //bitImg.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(dest));
+                Log.v("Catch","image sync fail");
                 return false;
             }
         }

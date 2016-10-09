@@ -8,6 +8,32 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="pagani.joe.steganography.MainActivity">
 
+    <Button
+        android:text="Decrypt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="138dp"
+        android:id="@+id/startDecryptBtn"
+        android:enabled="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/startEncryptBtn" />
+
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="Pic Crypt"
+        android:id="@+id/textView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="36sp" />
+
+    <Button
+        android:text="Encrypt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/startEncryptBtn"
+        android:enabled="true"
+        android:layout_above="@+id/startDecryptBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="61dp" />
 </RelativeLayout>
